@@ -7,6 +7,8 @@ function App() {
 
 const [search, setSearch ] = useState('')
 const [movies, setMovies] = useState([])
+// const [nominations, setNominations] = useState(0)
+const [nominated, setNominated] = useState([])
 
  const fetchMovies = (e) => {
    e.preventDefault()
@@ -22,6 +24,7 @@ const [movies, setMovies] = useState([])
     // display error when no search input
     // error handling when movie not found (try-catch)
    })
+   
  } 
  const handleNomination = (e, movieData) => {
   // 1. Get Index of the movie that will change
@@ -31,7 +34,18 @@ const [movies, setMovies] = useState([])
   // 3. make a copy of the movie I want to change
   let movie = {...allMovies[movieIdx]}
   // 4. change the Nominated property
-  movie.Nominated = !movieData.Nominated
+    if(movie.Nominated){
+      movie.Nominated = false
+      // remove from nominated
+      // let filtered = nominated.filter(mov => mov.imdbID === movieData.imdbID)
+      // setNominated([...nominated, ])
+    } else {
+      if(nominated.length < 5){
+      movie.Nominated = true
+      // add to nominated
+      setNominated([...nominated, movie])
+      }
+    }
   // 5. put it back into the array
   allMovies[movieIdx] = movie
   // 6. Set State with modified array
@@ -52,10 +66,11 @@ const [movies, setMovies] = useState([])
           <p>Movie title</p>
           <div className="search-bar">
             <input type="text" name="movie-search" id="movie" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-            <div className="search-icon"><i className="fas fa-search"></i></div>
+            <div className="search-icon" onClick={fetchMovies}><i className="fas fa-search"></i></div>
             <input type="submit" value="Search"/>
           </div>
       </form>
+
       <div className="results">
         <div className="movies-container">
           {movies.map((mov, i) => {
@@ -63,12 +78,17 @@ const [movies, setMovies] = useState([])
             return mov.Nominated?  null : <Movie key={i} data={mov} nominated={mov.Nominated} onNominate={handleNomination}/> 
           })}
         </div>
+
         <div className="nominated-container">
             <h3>Your Nominations</h3>
             <div className="nominated">
               {movies.map((mov, i) => {
-                // if movie is nominated then show it in this column
-                return mov.Nominated? <Movie key={i} data={mov} nominated={mov.Nominated} onNominate={handleNomination}/> : null
+                if(i > 4){
+                  return
+                } else {
+                  // if movie is nominated then show it in this column
+                  return mov.Nominated? <Movie key={i} data={mov} nominated={mov.Nominated} onNominate={handleNomination}/> : null
+                }
               })}
             </div>
         </div>
