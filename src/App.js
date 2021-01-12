@@ -46,7 +46,6 @@ const [nominated, setNominated] = useState([])
 
  const addNomination = (e, movieData) => {
    if(nominated.length < 5){
-    //  if(e.target.dataset.id === movieData.imdbID){
         // disable button (prevents click)
         let targetBtn = document.querySelectorAll(`[data-id=${movieData.imdbID}]`)[0]
         targetBtn.classList.add('disabled')
@@ -54,8 +53,14 @@ const [nominated, setNominated] = useState([])
         let newNominated = [...nominated, movieData]
         // sets the state
         setNominated(newNominated)
-    //  }
-   } // else show message showing theres no space
+   } else { // else show message 'limit of nominations'
+      let popUp = document.querySelector('.error-nominations')
+      popUp.style.display = "flex"
+      setTimeout(() => {
+        popUp.style.display = "none"
+      }, 2000)
+   }
+   
  }
 
  const removeNomination = (e, movieData) => {
@@ -101,7 +106,10 @@ const [nominated, setNominated] = useState([])
             </div>
         </div>
       </div>
-
+      <div className="error-nominations">
+        <div><i className="fas fa-ban"></i></div>
+        <div>You have already nominated 5 movies</div>
+      </div>
     </div>
   );
 }
