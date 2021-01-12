@@ -17,12 +17,16 @@ const [nominated, setNominated] = useState([])
    fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=be887243&s=${search}&type=movie`)
    .then(resp => resp.json())
    .then(data => {
+      // clear search input
+      setSearch("")
+      // error handling for response
+      if(data.Response === "False") {
+        displayError(data.Error)
+        return
+      }
       // Filter to only display first 10 results
       let newMovies = data.Search.filter((mov, i) => i < 10 )
       setMovies(newMovies)
-      // clear search input
-      setSearch("")
-      // error handling when movie not found (try-catch)
 
       // make sure all buttons are disabled if movies are not nominated
       let moviesContainer = Array.from(document.querySelector('.movies-container').children)
@@ -54,25 +58,33 @@ const [nominated, setNominated] = useState([])
         // sets the state
         setNominated(newNominated)
    } else { // else show message 'limit of nominations'
-      let popUp = document.querySelector('.error-nominations')
-      popUp.style.display = "flex"
-      setTimeout(() => {
-        popUp.style.display = "none"
-      }, 2000)
+      displayError('You have already nominated 5 movies')
    }
    
  }
 
+ 
  const removeNomination = (e, movieData) => {
-  // filter out the selected movie
-  let filteredMovies = nominated.filter(mov => mov.imdbID !== movieData.imdbID)
-  // sets the state with filteredMovies
-  setNominated(filteredMovies)
-  // find button with same id as movie
-  let disabledBtn = document.querySelectorAll(`[data-id=${movieData.imdbID}]`)[0]
-  // remove 'disabled' class
-  disabledBtn.classList.remove('disabled')
- }
+   // filter out the selected movie
+   let filteredMovies = nominated.filter(mov => mov.imdbID !== movieData.imdbID)
+   // sets the state with filteredMovies
+   setNominated(filteredMovies)
+   // find button with same id as movie
+   let disabledBtn = document.querySelectorAll(`[data-id=${movieData.imdbID}]`)[0]
+   // remove 'disabled' class
+   disabledBtn.classList.remove('disabled')
+  }
+  
+  
+  const displayError = (message) => {
+   let popUp = document.querySelector('.error-nominations')
+   popUp.style.display = "flex"
+   popUp.innerText = `Error - ${message}`
+   setTimeout(() => {
+     popUp.style.display = "none"
+   }, 2000)
+  }
+
 
   return (
     <div className="App">
@@ -108,7 +120,7 @@ const [nominated, setNominated] = useState([])
       </div>
       <div className="error-nominations">
         <div><i className="fas fa-ban"></i></div>
-        <div>You have already nominated 5 movies</div>
+        <div></div>
       </div>
     </div>
   );
