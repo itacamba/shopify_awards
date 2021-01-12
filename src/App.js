@@ -12,57 +12,49 @@ const [nominated, setNominated] = useState([])
 
  const fetchMovies = (e) => {
    e.preventDefault()
+   if(search === "") return
    fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=be887243&s=${search}&type=movie`)
    .then(resp => resp.json())
    .then(data => {
-     // Filter to only display first 10 results
-     let newMovies = data.Search.filter((mov, i) => i < 10 )
-     // Add Key-Value pair to results, to keep control of nominations
-     let notNominatedMovies = newMovies.map(mov => ({...mov, Nominated: false}))
-     setMovies(notNominatedMovies)
-    // clear search input
-    // display error when no search input
+      // Filter to only display first 10 results
+      let newMovies = data.Search.filter((mov, i) => i < 10 )
+      setMovies(newMovies)
+      // clear search input
+      setSearch("")
+      // display error when no search input
     // error handling when movie not found (try-catch)
+
+    // make sure all buttons are disabled if movies are not nominated
+    let moviesContainer = Array.from(document.querySelector('.movies-container').children)
+    moviesContainer.forEach( movie => {
+      let movieBtn = movie.getElementsByTagName('button')[0]
+      // remove the 'disabled' class for all newMovies
+      movieBtn.classList.remove('disabled')
+
+      nominated.forEach(nominated => {
+        // if any 'nominated' movie is in the newMovies, then add the 'disabled' button
+        if(nominated.imdbID === movieBtn.dataset.id){
+          movieBtn.classList.add('disabled')
+        }
+      })
+    })
+    
+
    })
    
  } 
-//  const handleNomination = (movieData) => {
-//   // 1. Get Index of the movie that will get nominated {Nominated: True or False}
-//   let movieIdx = movies.findIndex(movie => movie.imdbID === movieData.imdbID)
-//   console.log('index: ', movieIdx)
-//   // 2. make a copy of all movies
-//   let allMovies = [...movies]
-//   // 3. make a copy of the movie I will nominate or remove from nominated
-//   let movie = {...allMovies[movieIdx]}
-//   // 4. change the Nominated property
-//     if(movie.Nominated){
-//       movie.Nominated = false
-//       // remove from 'nominated' state
-//       let filtered = nominated.filter(mov => mov.imdbID !== movieData.imdbID)
-//       console.log('filtered: ',filtered )
-//       // setNominated([...nominated, ])
-//     } else {
-//       if(nominated.length < 5){
-//       movie.Nominated = true
-//       // add to 'nominated' state
-//       console.log('nominating: ', movie.Title)
-//       setNominated([...nominated, movie])
-//       }
-//     }
-//   // 5. put the movie back into the array
-//   allMovies[movieIdx] = movie
-//   // 6. Set State with modified array
-//   setMovies(allMovies)
-//  }
 
  const addNomination = (e, movieData) => {
    if(nominated.length < 5){
+    //  if(e.target.dataset.id === movieData.imdbID){
         // disable button (prevents click)
-        e.target.classList.add('disabled')
+        let targetBtn = document.querySelectorAll(`[data-id=${movieData.imdbID}]`)[0]
+        targetBtn.classList.add('disabled')
         // add to nominated
         let newNominated = [...nominated, movieData]
         // sets the state
         setNominated(newNominated)
+    //  }
    } // else show message showing theres no space
  }
 
@@ -97,11 +89,6 @@ const [nominated, setNominated] = useState([])
         <div className="movies-container">
           {movies.map((mov, i) => {
             return <Movie key={i} data={mov} onNominate={addNomination} nominated={false} />
-          // // if Movie is Nominated
-          //  return mov.Nominated? 
-          //   <Movie key={i} data={mov} onNominate={removeNomination}/> 
-          //   : 
-          //   <Movie key={i} data={mov} onNominate={addNomination}/> 
           })}
         </div>
 
@@ -110,13 +97,6 @@ const [nominated, setNominated] = useState([])
             <div className="nominated">
               {nominated.map((mov, i) => {
                 return <Movie key={i} data={mov} onNominate={removeNomination} nominated={true} />
-                // // if the 'nominated' list is more than 5, then don't add anything
-                // if(nominated.length > 5){
-                //   return false;
-                // } else { // else add the movie to 'nominated'
-                //   // if movie is nominated then show it in this div
-                //   return mov.Nominated? <Movie key={i} data={mov} nominated={mov.Nominated} onNominate={handleNomination}/> : null
-                // }
               })}
             </div>
         </div>
