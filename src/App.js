@@ -12,7 +12,8 @@ const [nominated, setNominated] = useState([])
 
  const fetchMovies = (e) => {
    e.preventDefault()
-   if(search === "") return
+   // error handling when no input is given
+   if(search === "") return 
    fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=be887243&s=${search}&type=movie`)
    .then(resp => resp.json())
    .then(data => {
@@ -21,23 +22,22 @@ const [nominated, setNominated] = useState([])
       setMovies(newMovies)
       // clear search input
       setSearch("")
-      // display error when no search input
-    // error handling when movie not found (try-catch)
+      // error handling when movie not found (try-catch)
 
-    // make sure all buttons are disabled if movies are not nominated
-    let moviesContainer = Array.from(document.querySelector('.movies-container').children)
-    moviesContainer.forEach( movie => {
-      let movieBtn = movie.getElementsByTagName('button')[0]
-      // remove the 'disabled' class for all newMovies
-      movieBtn.classList.remove('disabled')
+      // make sure all buttons are disabled if movies are not nominated
+      let moviesContainer = Array.from(document.querySelector('.movies-container').children)
+      moviesContainer.forEach( movie => {
+        let movieBtn = movie.getElementsByTagName('button')[0]
+        // remove the 'disabled' class for all newMovies
+        movieBtn.classList.remove('disabled')
 
-      nominated.forEach(nominated => {
-        // if any 'nominated' movie is in the newMovies, then add the 'disabled' button
-        if(nominated.imdbID === movieBtn.dataset.id){
-          movieBtn.classList.add('disabled')
-        }
+        nominated.forEach(nominated => {
+          // if any 'nominated' movie is in the newMovies, then add the 'disabled' button
+          if(nominated.imdbID === movieBtn.dataset.id){
+            movieBtn.classList.add('disabled')
+          }
+        })
       })
-    })
     
 
    })

@@ -71,8 +71,17 @@ body{
   max-width: 350px;
   background-color: #f2f2f2;;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   margin-bottom: 10px;
+}
+.movie-poster{
+  width: 30%;
+}
+.movie-info{
+  width: 65%;
+}
+.movie-poster img{
+  width: 100%;
 }
 .movie p{
   margin-top: 15px;
