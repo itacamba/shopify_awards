@@ -19,7 +19,7 @@ const [searchTerm, setSearchTerm] = useState('')
    e.preventDefault()
    // error handling when no input is given
    if(search === "") return 
-   fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=be887243&s=${search}&type=movie`)
+   fetch(`https://www.omdbapi.com/?i=tt3896198&apikey=be887243&s=${search}&type=movie`)
    .then(resp => resp.json())
    .then(data => {
       // 'Results for ' state.
