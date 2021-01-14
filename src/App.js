@@ -13,6 +13,7 @@ const [movies, setMovies] = useState([])
 // nominated movies
 const [nominated, setNominated] = useLocalStorage('movies', [])
 
+
  const fetchMovies = (e) => {
    e.preventDefault()
    // error handling when no input is given
@@ -27,10 +28,10 @@ const [nominated, setNominated] = useLocalStorage('movies', [])
         displayError(data.Error)
         return
       }
-      // Set Movies
+      // Save Movies in State
       setMovies(data.Search)
       // make sure all buttons are disabled if movies are not nominated
-      let moviesContainer = Array.from(document.querySelector('.movies-container').children)
+      let moviesContainer = Array.from(document.querySelector('.movie-results').children)
       moviesContainer.forEach( movie => {
         let movieBtn = movie.getElementsByTagName('button')[0]
         // remove the 'disabled' class for all newMovies
@@ -43,19 +44,17 @@ const [nominated, setNominated] = useLocalStorage('movies', [])
           }
         })
       })
-    
-   })
-   
- } 
+    })
+  } 
 
  const addNomination = (e, movieData) => {
    if(nominated.length < 5){
         // disable button (prevents click)
         let targetBtn = document.querySelectorAll(`[data-id=${movieData.imdbID}]`)[0]
         targetBtn.classList.add('disabled')
-        // add to nominated
+        // add to nominated list
         let newNominated = [...nominated, movieData]
-        // sets the state
+        // sets the state with new nomination
         setNominated(newNominated)
    } else { // else show message 'limit of nominations'
       displayError('You have already nominated 5 movies')
@@ -77,9 +76,11 @@ const [nominated, setNominated] = useLocalStorage('movies', [])
   
   
   const displayError = (message) => {
+  // display div and add message
    let popUp = document.querySelector('.error-nominations')
    popUp.style.display = "flex"
    popUp.innerText = `Error - ${message}`
+   // hide div
    setTimeout(() => {
      popUp.style.display = "none"
    }, 2000)
@@ -96,7 +97,7 @@ const [nominated, setNominated] = useLocalStorage('movies', [])
       <form action="" onSubmit={fetchMovies} id="search-form">
           <p>Movie title</p>
           <div className="search-bar">
-            <input type="text" name="movie-search" id="movie" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <input type="text" name="movie-search" id="search-term" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
             <div className="search-icon" onClick={fetchMovies}><i className="fas fa-search"></i></div>
             <input type="submit" value="Search"/>
           </div>
@@ -104,9 +105,12 @@ const [nominated, setNominated] = useLocalStorage('movies', [])
 
       <div className="results">
         <div className="movies-container">
-          {movies.map((mov, i) => {
-            return <Movie key={i} data={mov} onNominate={addNomination} nominated={false} />
-          })}
+          <h3>Results for </h3>
+          <div className="movie-results">
+            {movies.map((mov, i) => {
+              return <Movie key={i} data={mov} onNominate={addNomination} nominated={false} />
+            })}
+          </div>
         </div>
 
         <div className="nominated-container">

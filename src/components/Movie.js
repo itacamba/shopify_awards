@@ -6,6 +6,7 @@ const Movie = ({data, onNominate, nominated}) => {
     return (
         <div className="movie">
             <div className="movie-poster">
+                {/* if poster does not exist, then use default image */}
                 <img src={Poster === "N/A"? "https://media.comicbook.com/files/img/default-movie.png" : Poster} alt=""/>
             </div>
             <div className="movie-info">
