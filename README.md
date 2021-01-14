@@ -1,6 +1,6 @@
 
 ### Features of The Shoppies Awards
-1.- Search movie by title
+1.- Search movie by title (only movies)
 2.- Form is cleared after submission.
 3.- Attributes of each movie include 
     - Poster
@@ -16,3 +16,4 @@
     - When the search is not specific (Too many results)
     - When user has nominated 5 movies
 7.- Nominated movies are persisted if user refreshes the page.
+8.- Webpage is Responsive.

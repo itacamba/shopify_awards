@@ -13,6 +13,7 @@ const [movies, setMovies] = useState([])
 // nominated movies
 const [nominated, setNominated] = useLocalStorage('movies', [])
 
+const [searchTerm, setSearchTerm] = useState('')
 
  const fetchMovies = (e) => {
    e.preventDefault()
@@ -21,11 +22,14 @@ const [nominated, setNominated] = useLocalStorage('movies', [])
    fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=be887243&s=${search}&type=movie`)
    .then(resp => resp.json())
    .then(data => {
+      // 'Results for ' state.
+      setSearchTerm(`for "${document.getElementById('search-term').value}"`)
       // clear search input
       setSearch("")
       // error handling for response
       if(data.Response === "False") {
         displayError(data.Error)
+        setMovies([])
         return
       }
       // Save Movies in State
@@ -99,13 +103,12 @@ const [nominated, setNominated] = useLocalStorage('movies', [])
           <div className="search-bar">
             <input type="text" name="movie-search" id="search-term" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
             <div className="search-icon" onClick={fetchMovies}><i className="fas fa-search"></i></div>
-            <input type="submit" value="Search"/>
           </div>
       </form>
 
       <div className="results">
         <div className="movies-container">
-          <h3>Results for </h3>
+          <h3>Results {searchTerm}</h3>
           <div className="movie-results">
             {movies.map((mov, i) => {
               return <Movie key={i} data={mov} onNominate={addNomination} nominated={false} />
@@ -114,7 +117,7 @@ const [nominated, setNominated] = useLocalStorage('movies', [])
         </div>
 
         <div className="nominated-container">
-            <h3>Your Nominations</h3>
+            <h3>Your Nominations - {nominated.length}</h3>
             <div className="nominated">
               {nominated.slice(0).reverse().map((mov, i) => {
                 return <Movie key={i} data={mov} onNominate={removeNomination} nominated={true} />
