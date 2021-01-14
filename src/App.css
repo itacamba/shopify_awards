@@ -109,7 +109,7 @@ body{
   background-color: #fff;
   padding: 20px;
   min-height: 400px;
-  max-height: 800px;
+  max-height: 940px;
 }
 .nominated-container .movie:first-child{
   margin-top: 20px;
@@ -131,7 +131,4 @@ body{
   transform: translate(-50%, -50%);
   padding: 20px 15px;
   display: none;
-}
-.error-nominations i {
-  color:rgb(216, 90, 90);
 }

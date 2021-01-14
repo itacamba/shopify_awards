@@ -2,13 +2,16 @@ import React, {useState} from 'react';
 
 import './App.css';
 import Movie from './components/Movie';
+import useLocalStorage from "./hooks/useLocalStorage"
 
 function App() {
 
+// form controlled by state
 const [search, setSearch ] = useState('')
+// movies searched
 const [movies, setMovies] = useState([])
-// const [nominations, setNominations] = useState(0)
-const [nominated, setNominated] = useState([])
+// nominated movies
+const [nominated, setNominated] = useLocalStorage('movies', [])
 
  const fetchMovies = (e) => {
    e.preventDefault()
@@ -24,10 +27,8 @@ const [nominated, setNominated] = useState([])
         displayError(data.Error)
         return
       }
-      // Filter to only display first 10 results
-      let newMovies = data.Search.filter((mov, i) => i < 10 )
-      setMovies(newMovies)
-
+      // Set Movies
+      setMovies(data.Search)
       // make sure all buttons are disabled if movies are not nominated
       let moviesContainer = Array.from(document.querySelector('.movies-container').children)
       moviesContainer.forEach( movie => {
@@ -36,14 +37,13 @@ const [nominated, setNominated] = useState([])
         movieBtn.classList.remove('disabled')
 
         nominated.forEach(nominated => {
-          // if any 'nominated' movie is in the newMovies, then add the 'disabled' button
+          // if any 'nominated' movie is in the left-column, then add the 'disabled' button
           if(nominated.imdbID === movieBtn.dataset.id){
             movieBtn.classList.add('disabled')
           }
         })
       })
     
-
    })
    
  } 
@@ -112,15 +112,13 @@ const [nominated, setNominated] = useState([])
         <div className="nominated-container">
             <h3>Your Nominations</h3>
             <div className="nominated">
-              {nominated.map((mov, i) => {
+              {nominated.slice(0).reverse().map((mov, i) => {
                 return <Movie key={i} data={mov} onNominate={removeNomination} nominated={true} />
               })}
             </div>
         </div>
       </div>
       <div className="error-nominations">
-        <div><i className="fas fa-ban"></i></div>
-        <div></div>
       </div>
     </div>
   );
